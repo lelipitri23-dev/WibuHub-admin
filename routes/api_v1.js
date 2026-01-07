@@ -193,7 +193,7 @@ router.get('/home', async (req, res) => {
 router.get('/version', (req, res) => {
     // Anda bisa load dari file json atau hardcode di sini
     const appVersion = {
-        version: "1.0.0", // Ganti manual saat rilis versi baru
+        version: "5.5.0", // Ganti manual saat rilis versi baru
         url: "https://dl.dropboxusercontent.com/s/...", // Link download APK langsung
         forceUpdate: false, // Ubah true jika update bersifat wajib (misal ada perubahan API)
         message: "Update baru tersedia! Yuk update sekarang."
