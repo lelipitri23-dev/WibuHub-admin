@@ -187,6 +187,21 @@ router.get('/home', async (req, res) => {
     }
 });
 
+// --- TAMBAHKAN DI api_v1.js ---
+
+// Endpoint Cek Versi Aplikasi
+router.get('/version', (req, res) => {
+    // Anda bisa load dari file json atau hardcode di sini
+    const appVersion = {
+        version: "1.0.0", // Ganti manual saat rilis versi baru
+        url: "https://dl.dropboxusercontent.com/s/...", // Link download APK langsung
+        forceUpdate: false, // Ubah true jika update bersifat wajib (misal ada perubahan API)
+        message: "Update baru tersedia! Yuk update sekarang."
+    };
+    
+    res.json(appVersion);
+});
+
 // Fitur Search (Belum ada sebelumnya)
 // --- TAMBAHKAN DI api_v1.js ---
 
