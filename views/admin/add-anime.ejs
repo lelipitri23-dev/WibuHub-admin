@@ -1,0 +1,156 @@
+<%- include('partials/header') %>
+<a href="/admin" class="admin-back-btn">« Kembali ke Dasbor</a>
+<h1>Tambah Anime Baru</h1>
+
+<style>
+    .admin-back-btn { display: inline-block; margin-bottom: 20px;
+    padding: 6px 12px; background-color: #555; color: #fff !important; border-radius: 4px; font-size: 0.9em; font-weight: bold; text-decoration: none;
+    }
+    .admin-form label { display: block; margin-bottom: 5px; font-weight: bold;
+    }
+    .admin-form input[type="text"], .admin-form textarea { width: 100%; padding: 8px; margin-bottom: 15px; background-color: #444;
+    border: 1px solid #666; color: #eee; border-radius: 4px; }
+    .admin-form textarea { min-height: 150px;
+    }
+    .admin-form button { padding: 10px 20px; background-color: #5cb85c; color: white; border: none; border-radius: 4px; cursor: pointer;
+    font-size: 1em; }
+    .jikan-generator { background: #3a3a3a; border: 1px solid #555; padding: 15px 20px; margin-bottom: 20px;
+    border-radius: 5px; }
+</style>
+
+<div class="admin-form jikan-generator">
+    <h2>Generate dari MyAnimeList</h2>
+    <label for="mal_id">MyAnimeList ID:</label>
+    <input type="text" id="mal_id" placeholder="Contoh: 5114" style="width: 200px; display: inline-block;">
+    <button type="button" id="jikan-generate-btn" style="background-color: #5bc0de;">Generate Data</button>
+    <div id="jikan-status" style="margin-top: 10px; font-weight: bold;"></div>
+</div>
+
+<form class="admin-form" id="addAnimeForm" action="/admin/anime/add" method="POST" enctype="multipart/form-data">
+    <div>
+        <label for="title">Judul:</label>
+        <input type="text" id="title" name="title" onkeyup="updateSlug()" required>
+    </div>
+    <div>
+        <label for="pageSlug">Slug:</label>
+        <input type="text" id="pageSlug" name="pageSlug" readonly style="background-color: #333; color: #999;">
+    </div>
+    
+    <div style="background: #333; padding: 15px; border-radius: 4px; margin-bottom: 20px; border: 1px dashed #666;">
+        <label style="color: #87CEEB; margin-bottom: 10px; display:block;">Upload Poster (R2):</label>
+        <input type="file" name="imageUpload" accept="image/*" style="margin-bottom: 15px; background: transparent; border: none; padding: 0;">
+        
+        <div style="border-top: 1px solid #555; margin: 10px 0; padding-top: 10px;">
+            <small style="color: #aaa; display: block; margin-bottom: 5px;">Atau gunakan URL eksternal (otomatis terisi jika generate MAL):</small>
+            <label for="imageUrl">URL Gambar:</label>
+            <input type="text" id="imageUrl" name="imageUrl" placeholder="https://..." style="margin-bottom:0;">
+        </div>
+    </div>
+
+    <div>
+        <label for="synopsis">Sinopsis:</label>
+        <textarea id="synopsis" name="synopsis"></textarea>
+    </div>
+
+    <h3>Info Detail</h3>
+    <div>
+        <label for="info.Alternatif">Alternatif:</label>
+        <input type="text" id="info.Alternatif" name="info.Alternatif">
+    </div>
+    <div>
+        <label for="info.Type">Type:</label>
+        <input type="text" id="info.Type" name="info.Type">
+    </div>
+    <div>
+        <label for="info.Status">Status:</label>
+        <input type="text" id="info.Status" name="info.Status">
+    </div>
+    <div>
+        <label for="info.Produser">Produser:</label>
+        <input type="text" id="info.Produser" name="info.Produser">
+    </div>
+    <div>
+        <label for="info.Rating">Rating:</label>
+        <input type="text" id="info.Rating" name="info.Rating" placeholder="Contoh: 8.5">
+    </div>
+    <div>
+        <label for="info.Released">Released (Tahun):</label>
+        <input type="text" id="info.Released" name="info.Released" placeholder="Contoh: 2025">
+    </div>
+    <div>
+        <label for="info.Studio">Studio:</label>
+        <input type="text" id="info.Studio" name="info.Studio">
+    </div>
+    
+
+    <h3>Genre</h3>
+    <div>
+        <label for="genres">Genre (pisahkan koma):</label>
+        <input type="text" id="genres" name="genres">
+    </div>
+
+    <button type="submit">Tambah Anime</button>
+</form>
+
+<script>
+    function slugify(text) {
+        return text.toString().toLowerCase().trim()
+            .replace(/\s+/g, '-')           // Replace spaces with -
+            .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+            .replace(/\-\-+/g, '-');        // Replace multiple - with single -
+    }
+
+    function updateSlug() {
+        let title = document.getElementById('title').value;
+        document.getElementById('pageSlug').value = slugify(title);
+    }
+
+    document.getElementById('jikan-generate-btn').addEventListener('click', async () => {
+        const malId = document.getElementById('mal_id').value;
+        const statusDiv = document.getElementById('jikan-status');
+        
+        if(!malId) return;
+        
+        statusDiv.textContent = 'Loading...';
+        statusDiv.style.color = 'cyan';
+
+        try {
+            const res = await fetch(`https://api.jikan.moe/v4/anime/${malId}`);
+            const json = await res.json();
+            const data = json.data;
+
+            document.getElementById('title').value = data.title;
+            document.getElementById('pageSlug').value = slugify(data.title);
+            document.getElementById('imageUrl').value = data.images.jpg.image_url;
+            document.getElementById('synopsis').value = data.synopsis;
+            document.getElementById('info.Alternatif').value = data.title_japanese;
+            document.getElementById('info.Type').value = data.type;
+            document.getElementById('info.Status').value = (data.status === 'Currently Airing') ? 'Ongoing' : 'Completed';
+            
+            // --- PERUBAHAN LOGIKA TAHUN (RELEASED) ---
+            let releaseYear = data.year;
+            // Jika data.year kosong, coba ambil dari properti 'aired'
+            if (!releaseYear && data.aired && data.aired.prop && data.aired.prop.from) {
+                releaseYear = data.aired.prop.from.year;
+            }
+            document.getElementById('info.Released').value = releaseYear || '';
+            // ------------------------------------------
+
+            document.getElementById('info.Rating').value = data.score || '0';
+            
+            document.getElementById('info.Studio').value = data.studios.map(s => s.name).join(', ');
+            const producers = data.producers.map(p => p.name).join(', ');
+            document.getElementById('info.Produser').value = producers;
+
+            const genres = data.genres.map(g => g.name).join(', ');
+            document.getElementById('genres').value = genres;
+            statusDiv.textContent = 'Sukses!';
+            statusDiv.style.color = '#5cb85c';
+        } catch (e) {
+            statusDiv.textContent = 'Error: ' + e.message;
+            statusDiv.style.color = 'red';
+        }
+    });
+</script>
+
+<%- include('partials/footer') %>

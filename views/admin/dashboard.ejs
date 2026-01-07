@@ -1,0 +1,55 @@
+<%- include('partials/header') %>
+
+<h1>Dashboard</h1>
+<p>Selamat datang, Administrator! Berikut adalah ringkasan data WibuHub.</p>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <h3>Total Anime</h3>
+        <p><%= totalAnime %></p>
+    </div>
+    <div class="stat-card stat-episodes">
+        <h3>Total Episode</h3>
+        <p><%= totalEpisodes %></p>
+    </div>
+    <div class="stat-card" style="border-left-color: var(--admin-warning);">
+        <h3>Total Users</h3>
+        <p><%= totalUsers %></p>
+    </div>
+</div>
+
+<h2 style="margin-top: 40px; border-bottom: 1px solid #3a3a4a; padding-bottom: 10px;">Menu Cepat</h2>
+
+<div class="dashboard-grid">
+    <a href="/admin/anime/add" class="card">
+        <span style="font-size: 1.5em; display: block; margin-bottom: 10px;">➕</span>
+        Tambah Anime
+    </a>
+    <a href="/admin/anime" class="card">
+        <span style="font-size: 1.5em; display: block; margin-bottom: 10px;">📺</span>
+        Kelola Anime
+    </a>
+    <a href="/admin/episodes" class="card">
+        <span style="font-size: 1.5em; display: block; margin-bottom: 10px;">🎬</span>
+        Kelola Episode
+    </a>
+    
+    <a href="/admin/batch-upload" class="card">
+        <span style="font-size: 1.5em; display: block; margin-bottom: 10px;">🚀</span>
+        Batch Upload
+    </a>
+    <a href="/admin/reports" class="card">
+        <span style="font-size: 1.5em; display: block; margin-bottom: 10px;">🚩</span>
+        Laporan Error
+    </a>
+    <a href="/admin/backup" class="card">
+        <span style="font-size: 1.5em; display: block; margin-bottom: 10px;">💾</span>
+        Backup / Restore
+    </a>
+    <a href="/admin/clear-mirrors" class="card card-special">
+        <span style="font-size: 1.5em; display: block; margin-bottom: 10px;">🧹</span>
+        Bersihkan Mirror
+    </a>
+</div>
+
+<%- include('partials/footer') %>
