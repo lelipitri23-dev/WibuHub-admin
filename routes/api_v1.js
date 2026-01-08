@@ -205,14 +205,10 @@ router.get('/episode/:animeId/:episodeNum', async (req, res) => {
         const currentIndex = allEps.findIndex(e => e.episodeSlug === episodeSlug);
         const prevSlug = currentIndex > 0 ? allEps[currentIndex - 1].episodeSlug : null;
         const nextSlug = currentIndex < allEps.length - 1 ? allEps[currentIndex + 1].episodeSlug : null;
-
-        // --- LOGIKA OTOMATISASI STREAMS ---
         const rawStreams = episode.streaming || episode.streams || [];
 
         const shortStreams = rawStreams.map(s => ({
             name: s.name,
-            // Mengubah URL asli menjadi Short URL Embed
-            // Kita gunakan ID episode agar route /embed/:id bisa memprosesnya
             url: generateShortUrl(episode._id),
             quality: s.quality || "720p",
             _id: s._id
@@ -223,7 +219,7 @@ router.get('/episode/:animeId/:episodeNum', async (req, res) => {
             title: episode.title,
             animeTitle: episode.animeTitle || '',
             imageUrl: episode.thumbnailUrl,
-            streams: shortStreams, // Sekarang berisi URL pendek
+            streams: shortStreams,
             downloads: episode.downloads || [],
             nav: {
                 prev: prevSlug,
@@ -243,8 +239,6 @@ router.get('/embed/:id', async (req, res) => {
         if (!episode) {
             return res.status(404).send('Video tidak ditemukan');
         }
-
-        // Mengambil URL video dari database
         const streams = episode.streaming || episode.streams || [];
         const videoUrl = streams.length > 0 ? streams[0].url : null;
         const animeTitle = episode.animeTitle || 'Nekoplayer';
@@ -423,12 +417,9 @@ router.get('/episodes', async (req, res) => {
             .skip(skip)
             .limit(limit)
             .lean();
-
-        // Format data agar sama dengan struktur Episode di Flutter
         const formatted = episodes.map(ep => ({
             title: ep.title,
             episodeSlug: ep.episodeSlug,
-            // Prioritaskan thumbnail, fallback ke placeholder
             imageUrl: ep.thumbnailUrl || 'https://placehold.co/300x169?text=EP',
             animeTitle: ep.animeTitle || 'Episode Baru'
         }));
