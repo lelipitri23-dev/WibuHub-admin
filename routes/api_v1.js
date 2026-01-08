@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const NodeCache = require('node-cache');
 
 // Setup Cache (TTL 5 menit)
-const cache = new NodeCache({ stdTTL: 300 }); 
+const cache = new NodeCache({ stdTTL: 60 });
 
 // Import Models
 const Anime = require('../models/Anime');
@@ -193,7 +193,7 @@ router.get('/home', async (req, res) => {
 router.get('/version', (req, res) => {
     // Anda bisa load dari file json atau hardcode di sini
     const appVersion = {
-        version: "5.5.0", // Ganti manual saat rilis versi baru
+        version: "1.0.0", // Ganti manual saat rilis versi baru
         url: "https://dl.dropboxusercontent.com/s/...", // Link download APK langsung
         forceUpdate: false, // Ubah true jika update bersifat wajib (misal ada perubahan API)
         message: "Update baru tersedia! Yuk update sekarang."
@@ -292,7 +292,7 @@ router.get('/episode/:animeId/:episodeNum', async (req, res) => {
             id: episode._id,
             title: episode.title,
             animeTitle: episode.animeTitle || '',
-            imageUrl: episode.imageUrl,
+            imageUrl: episode.thumbnailUrl,
             streams: episode.streaming || [],
             // Support struktur download baru (Nested)
             downloads: episode.downloads || [], 
