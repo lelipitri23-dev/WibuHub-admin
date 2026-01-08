@@ -16,7 +16,7 @@ const encodeAnimeSlugs = (list) => {
 };
 
 const generateShortUrl = (id) => {
-    return `http://localhost:3000/api/v1/embed/${id}`;
+    return `https://app.wibuhub.qzz.io/api/v1/embed/${id}`;
 };
 
 module.exports = { encodeAnimeSlugs, generateShortUrl };
