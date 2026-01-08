@@ -2,13 +2,21 @@
 const encodeAnimeSlugs = (list) => {
     if (!list) return [];
     return list.map(item => {
-        // Pastikan imageUrl ada, jika tidak pakai placeholder
         let img = item.imageUrl;
         if (!img || img.trim() === '') {
              img = 'https://placehold.co/200x300?text=No+Image';
         }
-        return { ...item, imageUrl: img };
+        return { 
+            ...item, 
+            imageUrl: img,
+            rating: item.info ? item.info.Rating : (item.rating || '0'),
+            type: item.info ? item.info.Type : (item.type || 'TV')
+        };
     });
 };
 
-module.exports = { encodeAnimeSlugs };
+const generateShortUrl = (id) => {
+    return `http://localhost:3000/api/v1/embed/${id}`;
+};
+
+module.exports = { encodeAnimeSlugs, generateShortUrl };
