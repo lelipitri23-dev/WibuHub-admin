@@ -412,6 +412,33 @@ router.delete('/library', protect, async (req, res) => {
     }
 });
 
+router.get('/episodes', async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 24;
+        const skip = (page - 1) * limit;
+
+        const episodes = await Episode.find({})
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit)
+            .lean();
+
+        // Format data agar sama dengan struktur Episode di Flutter
+        const formatted = episodes.map(ep => ({
+            title: ep.title,
+            episodeSlug: ep.episodeSlug,
+            // Prioritaskan thumbnail, fallback ke placeholder
+            imageUrl: ep.thumbnailUrl || 'https://placehold.co/300x169?text=EP',
+            animeTitle: ep.animeTitle || 'Episode Baru'
+        }));
+
+        res.json(formatted);
+    } catch (error) {
+        res.status(500).json({ message: 'Gagal memuat episode' });
+    }
+});
+
 // ==========================================
 // 5. META DATA & SETTINGS
 // ==========================================
@@ -460,7 +487,7 @@ router.get('/schedule', async (req, res) => {
 
 router.get('/version', (req, res) => {
     res.json({
-        version: "1.0.0",
+        version: "5.5.0",
         url: "https://dl.dropboxusercontent.com/s/...",
         forceUpdate: false,
         message: "Update baru tersedia! Yuk update sekarang."
