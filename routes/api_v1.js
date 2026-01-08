@@ -111,14 +111,28 @@ router.get('/home', async (req, res) => {
     try {
         const cachedData = cache.get('home_data');
         if (cachedData) return res.json(cachedData);
-
-        const selectFields = 'title pageSlug imageUrl info.Status info.Rating info.Type';
+        const selectFields = 'title pageSlug imageUrl synopsis info.Status info.Rating info.Type info.Studio';
 
         const [ongoing, ended, latest, episodes] = await Promise.all([
-            Anime.find({ "info.Status": "Ongoing" }).select(selectFields).sort({ updatedAt: -1 }).limit(10).lean(),
-            Anime.find({ "info.Status": { $in: ["Completed", "Ended", "Tamat"] } }).select(selectFields).sort({ updatedAt: -1 }).limit(10).lean(),
-            Anime.find({}).select(selectFields).sort({ createdAt: -1 }).limit(9).lean(),
-            Episode.find({}).sort({ createdAt: -1 }).limit(12).lean()
+            Anime.find({ "info.Status": "Ongoing" })
+                 .select(selectFields)
+                 .sort({ updatedAt: -1 })
+                 .limit(10)
+                 .lean(),
+            Anime.find({ "info.Status": { $in: ["Completed", "Ended", "Tamat"] } })
+                 .select(selectFields)
+                 .sort({ updatedAt: -1 })
+                 .limit(10)
+                 .lean(),
+            Anime.find({})
+                 .select(selectFields)
+                 .sort({ createdAt: -1 })
+                 .limit(9) // Limit 9 sesuai layout Grid/List UI
+                 .lean(),
+            Episode.find({})
+                   .sort({ createdAt: -1 })
+                   .limit(12)
+                   .lean()
         ]);
 
         const responseData = {
@@ -135,9 +149,11 @@ router.get('/home', async (req, res) => {
             }))
         };
 
+        // Simpan ke cache
         cache.set('home_data', responseData);
         res.json(responseData);
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Gagal memuat home' });
     }
 });
