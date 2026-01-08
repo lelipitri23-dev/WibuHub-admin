@@ -155,7 +155,7 @@ router.get('/home', async (req, res) => {
             // 3. Latest Series
             Anime.find({})
                 .select(selectFields)
-                .sort({ createdAt: -1 }).limit(7).lean(),
+                .sort({ createdAt: -1 }).limit(9).lean(),
             
             // 4. Latest Episodes (Perlu join ke Anime untuk dapat gambar poster jika thumbnail kosong)
             Episode.find({})
@@ -292,7 +292,7 @@ router.get('/episode/:animeId/:episodeNum', async (req, res) => {
             id: episode._id,
             title: episode.title,
             animeTitle: episode.animeTitle || '',
-            imageUrl: episode.thumbnailUrl,
+            imageUrl: episode.imageUrl,
             streams: episode.streaming || [],
             // Support struktur download baru (Nested)
             downloads: episode.downloads || [], 

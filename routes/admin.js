@@ -247,10 +247,36 @@ router.post('/report/delete/:id', requireAuth, async (req, res) => {
     res.redirect('/admin/reports');
 });
 
+// Pastikan Model User di-import jika belum
+// const User = require('../models/User'); 
+
 router.get('/backup', requireAuth, (req, res) => res.render('admin/backup', { page: 'backup' }));
+
 router.get('/backup/export', requireAuth, async (req, res) => {
-    const data = { animes: await Anime.find(), episodes: await Episode.find(), bookmarks: await Bookmark.find() };
-    res.attachment('backup.json'); res.send(JSON.stringify(data, null, 2));
+    try {
+        // Mengambil semua data dari database
+        // Menambahkan User karena terlihat ada di file backup Anda
+        const collections = {
+            users: await User.find(),
+            animes: await Anime.find(),
+            episodes: await Episode.find(),
+            bookmarks: await Bookmark.find()
+        };
+
+        // Membungkus dengan metadata tanggal export agar sesuai format file
+        const data = {
+            exportedAt: new Date().toISOString(),
+            collections: collections
+        };
+
+        const fileName = `backup_nekopoi_${new Date().toISOString().split('T')[0]}.json`;
+        res.attachment(fileName);
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(data, null, 2));
+    } catch (error) {
+        console.error("Export Error:", error);
+        res.status(500).send("Gagal Export: " + error.message);
+    }
 });
 
 router.post('/backup/import', requireAuth, upload.single('backupFile'), async (req, res) => {
@@ -258,20 +284,57 @@ router.post('/backup/import', requireAuth, upload.single('backupFile'), async (r
         if (!req.file) {
             return res.status(400).send("Tidak ada file yang diupload.");
         }
+
         const fileContent = req.file.buffer.toString('utf-8');
-        const data = JSON.parse(fileContent);
+        let parsedData;
         
-        await Anime.deleteMany({}); 
-        await Episode.deleteMany({}); 
-        await Bookmark.deleteMany({});
+        try {
+            parsedData = JSON.parse(fileContent);
+        } catch (e) {
+            return res.status(400).send("File rusak atau bukan JSON yang valid.");
+        }
+
+        // MENANGANI STRUKTUR FILE:
+        // Cek apakah data ada di dalam properti 'collections' (format baru) atau langsung di root (format lama)
+        const data = parsedData.collections || parsedData;
+
+        // Validasi kelengkapan data sebelum menghapus database
+        if (!data.animes && !data.episodes && !data.users) {
+            return res.status(400).send("Format file backup tidak valid atau data kosong.");
+        }
+
+        // PROSES RESTORE:
+        // Hapus data lama dan masukkan data baru.
+        // Urutan delete -> insert penting untuk menghindari duplikasi key error.
         
-        if(data.animes) await Anime.insertMany(data.animes);
-        if(data.episodes) await Episode.insertMany(data.episodes);
-        if(data.bookmarks) await Bookmark.insertMany(data.bookmarks);
+        // 1. Users
+        if (data.users && data.users.length > 0) {
+            await User.deleteMany({});
+            await User.insertMany(data.users);
+        }
+
+        // 2. Animes
+        if (data.animes && data.animes.length > 0) {
+            await Anime.deleteMany({});
+            await Anime.insertMany(data.animes);
+        }
+
+        // 3. Episodes
+        if (data.episodes && data.episodes.length > 0) {
+            await Episode.deleteMany({});
+            await Episode.insertMany(data.episodes);
+        }
+
+        // 4. Bookmarks
+        if (data.bookmarks && data.bookmarks.length > 0) {
+            await Bookmark.deleteMany({});
+            await Bookmark.insertMany(data.bookmarks);
+        }
         
-        res.send("Restore Success! <a href='/admin'>Back</a>");
+        res.send("Restore Success! Data berhasil dipulihkan. <br><a href='/admin'>Kembali ke Admin</a>");
+
     } catch (error) {
-        console.error(error);
+        console.error("Import Error:", error);
         res.status(500).send("Gagal Restore: " + error.message);
     }
 });
