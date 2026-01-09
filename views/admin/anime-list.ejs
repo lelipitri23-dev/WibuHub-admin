@@ -19,23 +19,25 @@
     text-decoration: none;
   }
 
-  /* --- GRID LIST STYLES --- */
+  /* --- GRID LIST STYLES (DIPERBAIKI) --- */
   .anime-grid-list {
     display: grid;
-    /* Membuat kolom responsif. Min 350px agar info tidak terlalu sempit */
-    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 15px;
     margin-bottom: 30px;
   }
 
   .list-card {
-    display: flex; /* Layout Horizontal (Gambar Kiri - Teks Kanan) */
+    display: flex;
     background-color: #333;
     border: 1px solid #444;
-    border-radius: 6px;
+    border-radius: 8px; /* Sudut lebih halus */
     overflow: hidden;
-    height: 120px; /* Tinggi kartu fixed agar rapi */
+    /* PERBAIKAN DISINI: Jangan kunci height di 120px */
+    height: auto; 
+    min-height: 145px; /* Tinggi minimal agar tombol muat */
     transition: all 0.2s ease;
+    position: relative;
   }
 
   .list-card:hover {
@@ -44,63 +46,75 @@
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   }
 
-  /* Bagian Gambar (Thumbnail Kecil) */
+  /* Gambar (Thumbnail) */
   .list-thumb {
-    width: 90px; /* Lebar gambar fixed */
-    height: 100%;
+    width: 100px; /* Sedikit diperlebar agar proporsional */
+    background-color: #222;
     flex-shrink: 0;
     position: relative;
-    background-color: #222;
+    display: flex; /* Memastikan gambar stretch */
   }
 
   .list-thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    display: block;
+    position: absolute; /* Kunci gambar agar memenuhi area */
+    top: 0; left: 0;
   }
 
-  /* Bagian Informasi */
+  /* Info Container */
   .list-info {
     flex-grow: 1;
-    padding: 10px 12px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    min-width: 0; /* Mencegah flex item overflow */
+    justify-content: space-between; /* Dorong tombol ke bawah */
+    min-width: 0;
   }
 
   .list-title {
-    margin: 0 0 4px 0;
-    font-size: 1em;
+    margin: 0 0 6px 0;
+    font-size: 1.05em;
     font-weight: bold;
     color: #fff;
-    white-space: nowrap;
+    line-height: 1.3;
+    /* Izinkan judul 2 baris, selebihnya titik-titik */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis; /* Judul panjang jadi titik-titik */
   }
 
   .list-meta {
     font-size: 0.8em;
     color: #aaa;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .list-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: auto; /* Dorong ke bawah */
+    margin-top: 10px; /* Jarak aman dari teks ke tombol */
     padding-top: 8px;
     border-top: 1px solid #444;
   }
 
-  /* Badge Status Kecil */
+  /* Badge Status */
   .status-badge {
     font-size: 0.75em;
-    padding: 2px 6px;
-    border-radius: 3px;
+    padding: 3px 8px;
+    border-radius: 4px;
     background: #555;
     color: #fff;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 5px;
   }
   .st-ongoing { background-color: #5bc0de; }
   .st-completed { background-color: #5cb85c; }
@@ -108,29 +122,29 @@
   /* Tombol Aksi */
   .action-links {
     display: flex;
-    gap: 10px;
+    gap: 12px;
   }
   .btn-edit-sm {
     color: #5bc0de;
-    font-size: 0.85em;
+    font-size: 0.9em;
     text-decoration: none;
     font-weight: bold;
+    padding: 2px 0;
   }
-  .btn-edit-sm:hover { text-decoration: underline; }
+  .btn-edit-sm:hover { text-decoration: underline; color: #7ad3ee; }
 
   .btn-delete-sm {
     background: none;
     border: none;
-    color: #d9534f;
-    font-size: 0.85em;
+    color: #ff6b6b; /* Warna merah lebih terang agar terlihat */
+    font-size: 0.9em;
     cursor: pointer;
-    padding: 0;
+    padding: 2px 0;
     font-weight: bold;
   }
-  .btn-delete-sm:hover { text-decoration: underline; color: #ff6b6b; }
+  .btn-delete-sm:hover { text-decoration: underline; color: #ff8787; }
 
-
-  /* --- Search Form (Tetap) --- */
+  /* Search Form */
   .admin-search-form {
     margin-bottom: 20px;
     display: flex;
@@ -158,10 +172,9 @@
     font-size: 0.9em;
   }
   .admin-search-form a { color: #aaa; font-size: 0.9em; text-decoration: none; }
-  .admin-search-form a:hover { text-decoration: underline; }
-  
   .pagination { margin-top: 20px; }
 </style>
+
 
 <form class="admin-search-form" action="/admin/anime" method="GET">
   <input type="text" name="search" placeholder="Cari berdasarkan Judul atau Slug..." value="<%= (typeof searchQuery !== 'undefined' && searchQuery) ? searchQuery : '' %>">
