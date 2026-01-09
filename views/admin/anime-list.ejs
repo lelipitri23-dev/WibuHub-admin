@@ -121,10 +121,7 @@
         <td><%= anime.info?.Status || 'N/A' %></td>
         <td><%= new Date(anime.updatedAt).toLocaleDateString('id-ID') %></td>
         <td>
-          <a href="/admin/anime/<%= encodeURIComponent(anime.pageSlug) %>/edit">Edit</a>
-          |
-          <a href="/anime/<%= encodeURIComponent(anime.pageSlug) %>" target="_blank">Lihat</a>
-          
+          <a href="/admin/anime/<%= encodeURIComponent(anime.pageSlug) %>/edit">Edit</a> |
           <form action="/admin/anime/<%= encodeURIComponent(anime.pageSlug) %>/delete" method="POST" style="display: inline-block;" onsubmit="return confirm('Yakin ingin menghapus anime ini? Ini akan menghapus SEMUA episodenya juga!');">
             <button type="submit" class="btn-danger">Delete</button>
           </form>
