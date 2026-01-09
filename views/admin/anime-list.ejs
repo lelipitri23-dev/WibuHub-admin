@@ -19,95 +19,118 @@
     text-decoration: none;
   }
 
-  /* --- Grid System Styles --- */
-  .anime-grid {
+  /* --- GRID LIST STYLES --- */
+  .anime-grid-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 20px;
+    /* Membuat kolom responsif. Min 350px agar info tidak terlalu sempit */
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 15px;
     margin-bottom: 30px;
   }
 
-  .anime-card {
-    background-color: #333; /* Latar belakang kartu */
-    border: 1px solid #555;
-    border-radius: 8px;
+  .list-card {
+    display: flex; /* Layout Horizontal (Gambar Kiri - Teks Kanan) */
+    background-color: #333;
+    border: 1px solid #444;
+    border-radius: 6px;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    transition: transform 0.2s;
+    height: 120px; /* Tinggi kartu fixed agar rapi */
+    transition: all 0.2s ease;
   }
 
-  .anime-card:hover {
-    transform: translateY(-5px);
+  .list-card:hover {
     border-color: #5bc0de;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   }
 
-  .anime-card-img-wrapper {
-    width: 100%;
-    height: 280px; /* Tinggi gambar fixed agar rapi */
-    overflow: hidden;
+  /* Bagian Gambar (Thumbnail Kecil) */
+  .list-thumb {
+    width: 90px; /* Lebar gambar fixed */
+    height: 100%;
+    flex-shrink: 0;
     position: relative;
     background-color: #222;
   }
 
-  .anime-card img {
+  .list-thumb img {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* Agar gambar mengisi area tanpa gepeng */
-    display: block;
+    object-fit: cover;
   }
 
-  .anime-card-body {
-    padding: 15px;
+  /* Bagian Informasi */
+  .list-info {
     flex-grow: 1;
+    padding: 10px 12px;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    min-width: 0; /* Mencegah flex item overflow */
   }
 
-  .anime-title {
-    font-size: 1.1em;
+  .list-title {
+    margin: 0 0 4px 0;
+    font-size: 1em;
     font-weight: bold;
-    margin: 0 0 10px 0;
-    line-height: 1.4;
     color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Judul panjang jadi titik-titik */
   }
 
-  .anime-meta {
-    font-size: 0.85em;
-    color: #ccc;
-    margin-bottom: 5px;
-  }
-
-  .anime-status {
-    display: inline-block;
-    padding: 2px 6px;
-    border-radius: 4px;
+  .list-meta {
     font-size: 0.8em;
-    font-weight: bold;
-    margin-bottom: 10px;
+    color: #aaa;
+    margin-bottom: 2px;
   }
-  .status-ongoing { background-color: #5bc0de; color: #fff; }
-  .status-completed { background-color: #5cb85c; color: #fff; }
-  .status-na { background-color: #777; color: #fff; }
 
-  .anime-card-actions {
-    padding: 10px 15px;
-    background-color: #2c2c2c;
-    border-top: 1px solid #444;
+  .list-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: auto; /* Dorong ke bawah */
+    padding-top: 8px;
+    border-top: 1px solid #444;
   }
 
-  .btn-edit {
+  /* Badge Status Kecil */
+  .status-badge {
+    font-size: 0.75em;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: #555;
+    color: #fff;
+  }
+  .st-ongoing { background-color: #5bc0de; }
+  .st-completed { background-color: #5cb85c; }
+
+  /* Tombol Aksi */
+  .action-links {
+    display: flex;
+    gap: 10px;
+  }
+  .btn-edit-sm {
     color: #5bc0de;
+    font-size: 0.85em;
     text-decoration: none;
     font-weight: bold;
-    font-size: 0.9em;
   }
-  .btn-edit:hover { text-decoration: underline; color: #31b0d5; }
+  .btn-edit-sm:hover { text-decoration: underline; }
 
-  /* --- Search Form Styles (Keep existing) --- */
+  .btn-delete-sm {
+    background: none;
+    border: none;
+    color: #d9534f;
+    font-size: 0.85em;
+    cursor: pointer;
+    padding: 0;
+    font-weight: bold;
+  }
+  .btn-delete-sm:hover { text-decoration: underline; color: #ff6b6b; }
+
+
+  /* --- Search Form (Tetap) --- */
   .admin-search-form {
     margin-bottom: 20px;
     display: flex;
@@ -134,32 +157,10 @@
     cursor: pointer;
     font-size: 0.9em;
   }
-  .admin-search-form a {
-    color: #aaa;
-    font-size: 0.9em;
-    text-decoration: none;
-  }
-  .admin-search-form a:hover {
-    text-decoration: underline;
-  }
+  .admin-search-form a { color: #aaa; font-size: 0.9em; text-decoration: none; }
+  .admin-search-form a:hover { text-decoration: underline; }
   
-  .btn-danger {
-    background-color: #d9534f !important;
-    color: white;
-    border: none;
-    padding: 4px 10px !important;
-    font-size: 0.9em;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  .btn-danger:hover {
-    background-color: #c9302c !important;
-  }
-
-  /* Pagination styles adjustments if needed */
-  .pagination {
-      margin-top: 20px;
-  }
+  .pagination { margin-top: 20px; }
 </style>
 
 <form class="admin-search-form" action="/admin/anime" method="GET">
@@ -177,42 +178,43 @@
       </div>
     <% } else { %>
       
-      <div class="anime-grid">
+      <div class="anime-grid-list">
         <% animes.forEach(anime => { %>
-          <div class="anime-card">
-            <div class="anime-card-img-wrapper">
-                <img src="<%= anime.imageUrl || '/images/default.jpg' %>" alt="<%= anime.title %>" loading="lazy">
+            
+          <div class="list-card">
+            <div class="list-thumb">
+                <img src="<%= anime.imageUrl || '/images/default.jpg' %>" alt="Poster" loading="lazy">
             </div>
 
-            <div class="anime-card-body">
-                <% 
-                   let statusClass = 'status-na';
-                   let statusText = anime.info?.Status || 'N/A';
-                   if(statusText.toLowerCase().includes('ongoing')) statusClass = 'status-ongoing';
-                   if(statusText.toLowerCase().includes('completed')) statusClass = 'status-completed';
-                %>
+            <div class="list-info">
                 <div>
-                    <span class="anime-status <%= statusClass %>"><%= statusText %></span>
+                    <h3 class="list-title" title="<%= anime.title %>"><%= anime.title %></h3>
+                    
+                    <% 
+                   let statusClass = '';
+                   let statusText = anime.info?.Status || 'N/A';
+                   if(statusText.toLowerCase().includes('ongoing')) statusClass = 'st-ongoing';
+                   if(statusText.toLowerCase().includes('completed')) statusClass = 'st-completed';
+                %>
+                    <div style="margin-bottom: 5px;">
+                        <span class="status-badge <%= statusClass %>"><%= statusText %></span>
+                    </div>
+
+                    <div class="list-meta">Slug: <%= anime.pageSlug %></div>
+                    <div class="list-meta">Upd: <%= new Date(anime.updatedAt).toLocaleDateString('id-ID') %></div>
                 </div>
 
-                <h3 class="anime-title"><%= anime.title %></h3>
-                
-                <div class="anime-meta">
-                    <strong>Slug:</strong> <%= anime.pageSlug %>
+                <div class="list-actions">
+                    <div class="action-links">
+                        <a href="/admin/anime/<%= encodeURIComponent(anime.pageSlug) %>/edit" class="btn-edit-sm">Edit</a>
+                        <form action="/admin/anime/<%= encodeURIComponent(anime.pageSlug) %>/delete" method="POST" style="display:inline; margin:0;" onsubmit="return confirm('Yakin hapus?');">
+                            <button type="submit" class="btn-delete-sm">Hapus</button>
+                        </form>
+                    </div>
                 </div>
-                <div class="anime-meta">
-                    <strong>Update:</strong> <%= new Date(anime.updatedAt).toLocaleDateString('id-ID') %>
-                </div>
-            </div>
-
-            <div class="anime-card-actions">
-                <a href="/admin/anime/<%= encodeURIComponent(anime.pageSlug) %>/edit" class="btn-edit">Edit</a>
-                
-                <form action="/admin/anime/<%= encodeURIComponent(anime.pageSlug) %>/delete" method="POST" style="margin: 0;" onsubmit="return confirm('Yakin ingin menghapus anime ini? Ini akan menghapus SEMUA episodenya juga!');">
-                    <button type="submit" class="btn-danger">Delete</button>
-                </form>
             </div>
           </div>
+
         <% }) %>
       </div>
 
@@ -222,17 +224,11 @@
 <% if (totalPages > 1) { %>
   <div class="pagination">
     <% const pageSeparator = baseUrl.includes('?') ? '&' : '?'; %>
-
     <% if (currentPage > 1) { %> <a href="<%= baseUrl %><%= pageSeparator %>page=<%= currentPage - 1 %>">« Prev</a> <% } else { %> <span class="disabled">« Prev</span> <% } %>
-    
-    <% const maxP = 5;
-       let sP = Math.max(1, currentPage - Math.floor(maxP / 2)); let eP = Math.min(totalPages, sP + maxP - 1); if(eP-sP+1<maxP) sP=Math.max(1,eP-maxP+1);
-    %>
+    <% const maxP = 5; let sP = Math.max(1, currentPage - Math.floor(maxP / 2)); let eP = Math.min(totalPages, sP + maxP - 1); if(eP-sP+1<maxP) sP=Math.max(1,eP-maxP+1); %>
     <% if (sP > 1) { %> <a href="<%= baseUrl %><%= pageSeparator %>page=1">1</a> <% if (sP > 2) { %> <span class="disabled">...</span> <% } %> <% } %>
     <% for (let i = sP; i <= eP; i++) { %> <% if (i === currentPage) { %> <span class="current"><%= i %></span> <% } else { %> <a href="<%= baseUrl %><%= pageSeparator %>page=<%= i %>"><%= i %></a> <% } %> <% } %>
-    <% if (eP < totalPages) { %> <% if (eP < totalPages - 1) { %> <span class="disabled">...</span> 
-    <% } %> <a href="<%= baseUrl %><%= pageSeparator %>page=<%= totalPages %>"><%= totalPages %></a> <% } %>
-    
+    <% if (eP < totalPages) { %> <% if (eP < totalPages - 1) { %> <span class="disabled">...</span> <% } %> <a href="<%= baseUrl %><%= pageSeparator %>page=<%= totalPages %>"><%= totalPages %></a> <% } %>
     <% if (currentPage < totalPages) { %> <a href="<%= baseUrl %><%= pageSeparator %>page=<%= currentPage + 1 %>">Next »</a> <% } else { %> <span class="disabled">Next »</span> <% } %>
   </div>
 <% } %>
