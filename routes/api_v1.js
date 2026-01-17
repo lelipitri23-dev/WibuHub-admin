@@ -350,6 +350,7 @@ router.get('/embed/:id', async (req, res) => {
             });
         });
     </script>
+    <script async src="https://js.wpadmngr.com/static/adManager.js" data-admpid="314095"></script>
 </body>
 </html>
         `);
